@@ -1,0 +1,152 @@
+@import 'tailwindcss';
+
+:root {
+  /* Inspection-bench, not paper ledger: cool clinical white-grey, the
+     surface of a QC desk rather than a warm document page. */
+  --paper: #edeef0;
+  --paper-raised: #ffffff;
+  --paper-line: #d5d7da;
+  --ink: #1e2124;
+  --ink-soft: #62666b;
+  --graphite: #8a9099;
+  /* The seal: the mark a field gets once a person confirms it, like a
+     brass "inspected & passed" tag. Deepened from a lighter brass swatch
+     so it still passes contrast as text, a border, and button text-on-top. */
+  --stamp: #7d5e1a;
+  --stamp-deep: #5f4812;
+  /* A separate color for real problems, so "confirmed" and "something is
+     wrong" never share one color the way a single red used to mean both. */
+  --alert: #b3412c;
+  --alert-deep: #8f3423;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-paper-line: var(--paper-line);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-graphite: var(--graphite);
+  --color-stamp: var(--stamp);
+  --color-stamp-deep: var(--stamp-deep);
+  --color-alert: var(--alert);
+  --color-alert-deep: var(--alert-deep);
+  --font-display: var(--font-special-elite);
+  --font-body: var(--font-source-serif);
+  --font-data: var(--font-plex-mono);
+  --animate-stamp-in: stamp-in 0.22s cubic-bezier(0.3, 1.2, 0.4, 1) both;
+  --animate-rise: rise 0.5s ease-out both;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #1a1c1f;
+    --paper-raised: #232629;
+    --paper-line: #34383c;
+    --ink: #e7e8e6;
+    --ink-soft: #a6abaf;
+    --graphite: #75797d;
+    --stamp: #d9a643;
+    --stamp-deep: #b98730;
+    --alert: #d9735c;
+    --alert-deep: #c25a45;
+  }
+}
+
+/* Bespoke marks, not expressible as plain Tailwind utilities. */
+
+.paper-ruled {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-paper-line) 40%, transparent) 0,
+    color-mix(in srgb, var(--color-paper-line) 40%, transparent) 1px,
+    transparent 1px,
+    transparent 2.25rem
+  );
+}
+
+.paper-ruled-tight {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(1.6rem - 1px),
+    var(--color-paper-line) 1.6rem
+  );
+}
+
+/* The editor surface Tiptap renders (a contenteditable div) and the passage
+   highlights it draws as decoration spans. Neither is a normal element with
+   a className we control from JSX, so they live here. */
+
+.document-editor-surface {
+  min-height: 12rem;
+  padding: 0.75rem;
+  font-family: var(--font-data);
+  font-size: 0.875rem;
+  line-height: 1.6rem;
+  color: var(--color-ink);
+  outline: none;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.document-editor-surface p {
+  margin: 0 0 0.8rem;
+}
+
+.document-editor-surface p:last-child {
+  margin-bottom: 0;
+}
+
+.field-highlight {
+  border-radius: 1px;
+  box-shadow: inset 0 -0.35em 0
+    color-mix(in srgb, var(--color-graphite) 22%, transparent);
+}
+
+.field-highlight--human {
+  box-shadow: inset 0 -0.35em 0
+    color-mix(in srgb, var(--color-stamp) 28%, transparent);
+}
+
+.field-highlight--active {
+  border-radius: 2px;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--color-graphite) 28%, transparent);
+}
+
+.field-highlight--active.field-highlight--human {
+  background: color-mix(in srgb, var(--color-stamp) 32%, transparent);
+}
+
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    transform: scale(1.25) rotate(-4deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-1.5deg);
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
